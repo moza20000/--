@@ -1,11 +1,11 @@
-
+```html
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#101820">
-<title>Mahmoud LEGAL | الاستشارات القانونية</title>
+<title>Mahmoud ALQanawaty | الاستشارات القانونية</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -401,6 +401,38 @@ background:rgba(37,211,102,.17);
 transform:translateY(-2px)
 }
 
+/* Instagram */
+.instagram-link{
+display:inline-flex;
+align-items:center;
+gap:10px;
+margin-top:12px;
+padding:11px 17px;
+border:1px solid rgba(225,48,108,.5);
+background:rgba(225,48,108,.08);
+color:#ff8ab3;
+border-radius:9px;
+font-weight:800;
+transition:.2s
+}
+
+.instagram-link:hover{
+background:rgba(225,48,108,.18);
+transform:translateY(-2px)
+}
+
+.instagram-icon{
+width:30px;
+height:30px;
+display:grid;
+place-items:center;
+background:linear-gradient(45deg,#feda75,#fa7e1e,#d62976,#962fbf,#4f5bd5);
+color:white;
+border-radius:8px;
+font-size:21px;
+font-weight:900
+}
+
 .form{
 background:var(--panel);
 padding:25px;
@@ -518,6 +550,29 @@ font-weight:600;
 opacity:.75
 }
 
+/* Instagram floating button */
+.instagram-float{
+position:fixed;
+left:24px;
+bottom:100px;
+z-index:999;
+width:52px;
+height:52px;
+display:grid;
+place-items:center;
+border-radius:50%;
+background:linear-gradient(45deg,#feda75,#fa7e1e,#d62976,#962fbf,#4f5bd5);
+color:white;
+font-size:30px;
+font-weight:900;
+box-shadow:0 6px 25px rgba(214,41,118,.3);
+transition:.2s
+}
+
+.instagram-float:hover{
+transform:translateY(-5px) scale(1.05)
+}
+
 @media(max-width:800px){
 .links{
 display:none;
@@ -570,6 +625,13 @@ width:48px;
 height:48px;
 font-size:27px
 }
+
+.instagram-float{
+left:15px;
+bottom:85px;
+width:48px;
+height:48px
+}
 }
 </style>
 </head>
@@ -579,7 +641,7 @@ font-size:27px
 <header>
 <div class="wrap nav">
 <a class="brand" href="#home">
-Mahmoud LEGAL
+Mahmoud ALQanawaty
 <small>LEGAL CONSULTANCY</small>
 </a>
 
@@ -649,7 +711,7 @@ Mahmoud LEGAL
 <div class="wrap about-grid">
 <div>
 <div class="eyebrow">من نحن</div>
-<h2 style="font-size:32px;margin:8px 0">Mahmoud LEGAL</h2>
+<h2 style="font-size:32px;margin:8px 0">Mahmoud ALQanawaty</h2>
 <p style="color:var(--muted)">
 مساحة قانونية هدفها تبسيط المعلومات والإجراءات، وتسهيل التواصل بين صاحب الاستفسار والمحامي المختص. يتم تحديث هذه الصفحة ببيانات المحامي وخبراته ومجالات عمله الفعلية.
 </p>
@@ -704,6 +766,17 @@ Mahmoud LEGAL
 <div>
 <a class="contact-whatsapp" id="contactWhatsApp" href="#" target="_blank" rel="noopener noreferrer">
 <span>☏</span><span>تواصل مع المستشار عبر واتساب</span>
+</a>
+</div>
+
+<div>
+<a class="instagram-link"
+id="contactInstagram"
+href="https://www.instagram.com/YOUR_USERNAME/"
+target="_blank"
+rel="noopener noreferrer">
+<span class="instagram-icon">◎</span>
+<span>تابعنا على إنستجرام</span>
 </a>
 </div>
 
@@ -767,23 +840,33 @@ Mahmoud LEGAL
 
 <footer>
 <div class="wrap foot">
-<span>© 2026 Mahmoud LEGAL — جميع الحقوق محفوظة</span>
+<span>© 2026 Mahmoud ALQanawaty — جميع الحقوق محفوظة</span>
 <span>المحتوى للتعريف والتوعية العامة ولا يغني عن استشارة محامٍ مختص.</span>
 <span><a href="admin.html">دخول الإدارة</a></span>
 </div>
 </footer>
 
+<!-- Instagram floating button -->
+<a class="instagram-float"
+href="https://www.instagram.com/YOUR_USERNAME/"
+target="_blank"
+rel="noopener noreferrer"
+aria-label="تابعنا على إنستجرام">
+◎
+</a>
+
+<!-- WhatsApp floating button -->
 <a class="whatsapp-float"
-   id="floatingWhatsApp"
-   href="#"
-   target="_blank"
-   rel="noopener noreferrer"
-   aria-label="تواصل مع المستشار عبر واتساب">
-  <span class="whatsapp-icon">☏</span>
-  <span class="whatsapp-label">
-    تواصل مع المستشار
-    <small>نحن هنا للرد على استفسارك</small>
-  </span>
+id="floatingWhatsApp"
+href="#"
+target="_blank"
+rel="noopener noreferrer"
+aria-label="تواصل مع المستشار عبر واتساب">
+<span class="whatsapp-icon">☏</span>
+<span class="whatsapp-label">
+تواصل مع المستشار
+<small>نحن هنا للرد على استفسارك</small>
+</span>
 </a>
 
 <script>
@@ -793,6 +876,9 @@ Mahmoud LEGAL
 
 /* رقم واتساب المستشار */
 const WHATSAPP_NUMBER = '+201118855197';
+
+/* رابط إنستجرام */
+const INSTAGRAM_URL = 'https://www.instagram.com/YOUR_USERNAME/';
 
 /* إعدادات Supabase */
 const SUPABASE_URL =
@@ -848,6 +934,18 @@ function setupWhatsApp(){
 }
 
 setupWhatsApp();
+
+/* إعداد إنستجرام */
+const instagramButtons = [
+  document.getElementById('contactInstagram'),
+  document.querySelector('.instagram-float')
+];
+
+instagramButtons.forEach(function(button){
+  if(button){
+    button.href = INSTAGRAM_URL;
+  }
+});
 
 /* القائمة */
 const menu = document.getElementById('menu');
@@ -989,3 +1087,4 @@ form.addEventListener('submit', async function(e){
 
 </body>
 </html>
+```
