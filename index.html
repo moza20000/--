@@ -923,7 +923,7 @@ form.addEventListener('submit', async function(e){
     submitBtn.textContent = 'تم الحفظ، جارٍ إرسال الإشعار...';
 
     const { data: telegramData, error: telegramError } =
-      await legalSb.functions.invoke('telegram-notify', {
+      await legalSb.functions.invoke('smooth-endpoint', {
         body: {
           name: payload.full_name,
           phone: payload.phone,
