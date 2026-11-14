@@ -2,471 +2,775 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#101820">
 <title>إدارة MOZA LEGAL</title>
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap');
-:root{--bg:#070b14;--panel:#101827;--panel2:#0c1321;--gold:#d9b66e;--text:#f4f6fb;--muted:#9aa8bd;--line:rgba(217,182,110,.18);--green:#39d6a0;--blue:#70a7ff;--amber:#ffc85c;--red:#ff7777}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top right,#142039 0,#070b14 48%);color:var(--text);font-family:Cairo,sans-serif;line-height:1.75}
-.wrap{width:min(1380px,94%);margin:auto}header{border-bottom:1px solid var(--line);background:rgba(8,13,24,.88);backdrop-filter:blur(14px);position:sticky;top:0;z-index:5}
-.top{min-height:76px;display:flex;align-items:center;justify-content:space-between;gap:15px}.brand{font-size:22px;color:var(--gold);font-weight:900;text-decoration:none;letter-spacing:.3px}
-.btn{font:inherit;border:1px solid var(--gold);border-radius:10px;padding:10px 17px;background:linear-gradient(135deg,#e8cb88,#c8a458);color:#111827;font-weight:800;cursor:pointer;transition:.2s}.btn:hover{transform:translateY(-1px);filter:brightness(1.05)}.btn.secondary{background:transparent;color:var(--gold)}.btn:disabled{opacity:.55;cursor:wait;transform:none}
-main{padding:30px 0 55px}.panel{background:linear-gradient(145deg,rgba(18,28,45,.96),rgba(12,19,32,.96));border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:0 14px 38px rgba(0,0,0,.14);margin-bottom:20px}
-.login{max-width:460px;margin:45px auto}.muted,.small{color:var(--muted)}.small{font-size:12px}label{display:block;margin:12px 0 5px;font-size:14px}
-input,select{width:100%;background:#080f1c;border:1px solid #2a3950;color:white;border-radius:10px;padding:12px 13px;font:inherit;outline:none}input:focus,select:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(217,182,110,.12)}
-h1,h2,h3{margin-top:0}.msg{min-height:25px;color:#ffb4a9;font-size:13px}.hidden{display:none!important}
-.toolbar{display:flex;justify-content:space-between;gap:14px;align-items:center;flex-wrap:wrap}.hero{display:flex;justify-content:space-between;align-items:center;gap:18px}.hero h1{font-size:clamp(24px,3vw,34px);margin:0}.hero-actions{display:flex;gap:10px;flex-wrap:wrap}
-.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:18px 0}.stat{position:relative;overflow:hidden;background:linear-gradient(140deg,#121e31,#0b1220);border:1px solid var(--line);border-radius:16px;padding:17px}.stat:after{content:"";position:absolute;width:75px;height:75px;border-radius:50%;background:rgba(217,182,110,.06);left:-20px;top:-22px}.stat span{display:block;color:var(--muted);font-size:13px}.stat b{display:block;color:var(--gold);font-size:29px;line-height:1.5}.stat .stat-icon{position:absolute;left:16px;top:18px;font-size:20px;opacity:.8}
-.filters{display:grid;grid-template-columns:minmax(220px,1.6fr) repeat(2,minmax(150px,.7fr));gap:12px;align-items:end}.field label{margin-top:0}.section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}.section-head h3{margin:0}.result-count{color:var(--muted);font-size:13px}
-.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}.request-card{background:linear-gradient(155deg,#111c2d,#0b1220);border:1px solid #26344b;border-radius:16px;padding:17px;min-width:0;transition:.2s;position:relative;overflow:hidden}.request-card:hover{transform:translateY(-2px);border-color:rgba(217,182,110,.48);box-shadow:0 12px 28px #0003}.request-card:before{content:"";position:absolute;inset:0 0 auto;height:3px;background:var(--status-color,var(--gold))}.card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}.card-name{font-weight:800;font-size:17px;overflow-wrap:anywhere}.id-tag{font-size:11px;color:var(--muted);background:#202c40;border-radius:7px;padding:3px 8px;white-space:nowrap}.pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:4px 10px;font-size:12px;font-weight:800;white-space:nowrap}.pill.new{color:#9fc4ff;background:#20365c}.pill.reviewing{color:#ffda7d;background:#493a1e}.pill.contacted{color:#82efc6;background:#153d35}.pill.closed{color:#ffaaaa;background:#4b252d}
-.meta{display:grid;gap:9px;margin:15px 0;color:var(--muted);font-size:13px}.meta-row{display:flex;gap:9px;align-items:flex-start}.meta-row strong{color:#d9e1ef;font-weight:600}.meta-row a{color:var(--gold);text-decoration:none;direction:ltr;unicode-bidi:embed}.topic{display:inline-block;border:1px solid rgba(217,182,110,.2);background:rgba(217,182,110,.08);color:#ead5a5;border-radius:8px;padding:3px 9px;font-size:12px}.details{white-space:pre-wrap;overflow-wrap:anywhere;color:#c5cede;font-size:13px;background:#080f1b;border:1px solid #202c40;border-radius:10px;padding:11px;max-height:150px;overflow:auto;margin:12px 0}.card-footer{display:flex;align-items:center;gap:10px;justify-content:space-between;margin-top:14px;padding-top:13px;border-top:1px solid #263247}.status-select{max-width:190px;font-size:13px;padding:8px}.empty{text-align:center;color:var(--muted);padding:35px 12px;border:1px dashed #344258;border-radius:14px}
-@media(max-width:1050px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:650px){.wrap{width:min(100% - 22px,1380px)}main{padding-top:18px}.panel{padding:15px;border-radius:14px}.top{min-height:65px}.brand{font-size:17px}.hero{align-items:flex-start;flex-direction:column}.hero-actions{width:100%}.hero-actions .btn{flex:1}.stats{gap:9px}.stat{padding:12px}.stat b{font-size:24px}.filters{grid-template-columns:1fr}.cards{grid-template-columns:1fr}.card-footer{align-items:stretch;flex-direction:column}.status-select{max-width:none}}
-
-/* ===== MOZA LEGAL — Premium Admin UI ===== */
-:root{--bg:#070b13;--panel:#0e1624;--panel2:#0a111d;--gold:#d8b66d;--text:#f4f6fb;--muted:#94a3b8;--line:rgba(216,182,109,.17);--green:#4ad6a4;--blue:#7caeff;--amber:#f4c45f;--red:#ff8585}
-body{background-color:var(--bg);background-image:radial-gradient(ellipse at 88% -10%,rgba(53,81,128,.28),transparent 36%),radial-gradient(ellipse at 5% 45%,rgba(216,182,109,.055),transparent 35%),linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);background-size:auto,auto,34px 34px,34px 34px}
-header{background:rgba(7,11,19,.84);border-bottom:1px solid rgba(255,255,255,.075);box-shadow:0 10px 40px #0002}
-.top{min-height:82px}
-.brand{position:relative;display:inline-flex;align-items:center;gap:12px;font-size:18px;letter-spacing:.45px;color:#f4f0e5}
-.brand:before{content:'⚖';display:grid;place-items:center;width:43px;height:43px;border-radius:14px;background:linear-gradient(145deg,#f0d89c,#b38b42);color:#101722;font-size:23px;box-shadow:0 7px 24px rgba(216,182,109,.19)}
-.brand:after{content:'LEGAL MANAGEMENT';display:block;font-size:9px;letter-spacing:2px;color:var(--muted);font-weight:700;position:absolute;margin-top:36px;margin-right:55px}
-.btn{border-radius:11px;padding:10px 16px;box-shadow:0 5px 18px rgba(0,0,0,.13)}
-.btn.secondary{border-color:#334155;color:#e4c987;background:rgba(255,255,255,.025)}
-.btn.secondary:hover{border-color:var(--gold);background:rgba(216,182,109,.08)}
-main{padding-top:32px}
-.panel{background:linear-gradient(145deg,rgba(17,27,43,.96),rgba(10,17,29,.98));border:1px solid rgba(148,163,184,.14);border-radius:20px;box-shadow:0 22px 60px rgba(0,0,0,.2);backdrop-filter:blur(12px)}
-.hero{padding:28px 30px;position:relative;overflow:hidden;min-height:150px}
-.hero:after{content:'⚖';position:absolute;left:28px;bottom:-65px;font-size:190px;line-height:1;color:rgba(216,182,109,.045);pointer-events:none}
-.hero h1{font-size:clamp(25px,3vw,36px);letter-spacing:-.6px;margin:7px 0 4px;font-weight:900}
-.hero .small{font-size:13px}
-.hero .small:first-child{display:inline-flex;align-items:center;gap:8px;padding:5px 10px;border:1px solid rgba(216,182,109,.2);border-radius:999px;background:rgba(216,182,109,.06)}
-.hero .small:first-child:before{content:'';width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 12px var(--green)}
-.hero-actions{position:relative;z-index:1}
-.stats{gap:15px;margin:20px 0}
-.stat{padding:20px;border-radius:18px;border-color:rgba(148,163,184,.14);background:linear-gradient(145deg,rgba(19,31,49,.96),rgba(11,18,30,.98));box-shadow:inset 0 1px 0 rgba(255,255,255,.025);transition:transform .2s,border-color .2s}
-.stat:hover{transform:translateY(-3px);border-color:rgba(216,182,109,.34)}
-.stat span{font-size:13px;font-weight:700;letter-spacing:.1px}
-.stat b{font-size:34px;color:#f0d28c;font-variant-numeric:tabular-nums;margin-top:5px}
-.stat .stat-icon{left:18px;top:17px;width:42px;height:42px;display:grid;place-items:center;border:1px solid rgba(216,182,109,.16);border-radius:13px;background:rgba(216,182,109,.07);font-style:normal;font-size:21px;color:var(--gold)}
-section#dashboard>.panel:first-child{margin-bottom:19px}
-#dashboard>.panel:nth-of-type(2){padding:24px}
-.section-head{margin-bottom:22px}
-.section-head h3{font-size:20px;font-weight:900}
-.result-count{border:1px solid rgba(216,182,109,.17);background:rgba(216,182,109,.055);border-radius:999px;padding:5px 11px;color:#e5cc91;font-weight:700}
-.filters{padding:16px;border:1px solid rgba(148,163,184,.12);border-radius:15px;background:rgba(3,8,16,.28);grid-template-columns:minmax(250px,1.7fr) repeat(2,minmax(160px,.7fr))}
-.field label{font-size:12px;font-weight:800;color:#b9c4d5;margin-bottom:7px}
-input,select{background:#080f1b;border-color:#2a384d;border-radius:11px;min-height:46px;transition:border-color .2s,box-shadow .2s}
-input::placeholder{color:#68778d}
-input:focus,select:focus{border-color:rgba(216,182,109,.75);box-shadow:0 0 0 4px rgba(216,182,109,.09)}
-#loadMessage{padding:3px 2px;min-height:24px}
-.cards{gap:16px}
-.request-card{padding:19px;border-radius:17px;border-color:rgba(148,163,184,.15);background:linear-gradient(155deg,rgba(18,29,47,.98),rgba(10,17,29,.99));box-shadow:inset 0 1px 0 rgba(255,255,255,.025);}
-.request-card:before{height:3px;opacity:.9}
-.request-card:hover{transform:translateY(-4px);border-color:rgba(216,182,109,.32);box-shadow:0 18px 36px rgba(0,0,0,.22)}
-.card-name{font-size:18px;line-height:1.55}
-.id-tag{border:1px solid rgba(148,163,184,.13);background:#182438;padding:4px 9px}
-.pill{padding:5px 11px;letter-spacing:.1px}
-.meta{gap:11px;margin:17px 0}
-.meta-row{gap:10px}
-.meta-row>span:first-child{display:grid;place-items:center;width:25px;height:25px;flex:0 0 25px;border-radius:8px;background:rgba(148,163,184,.08);color:#c7d1e0;font-size:12px}
-.meta-row strong{font-weight:700}
-.topic{border-radius:9px}
-.details{background:rgba(4,9,17,.48);border-color:rgba(148,163,184,.13);border-radius:12px;line-height:1.85;max-height:145px}
-.card-footer{border-color:rgba(148,163,184,.14);padding-top:15px}
-.card-footer .small{font-weight:700}
-.status-select{max-width:190px;min-height:40px}
-.empty{background:rgba(4,9,17,.25);border-color:#344258;border-radius:15px}
-.login{padding:30px;border-radius:22px}
-.login h2{font-size:25px;font-weight:900}
-#loginForm .btn{min-height:48px}
-#logoutBtn{position:relative;z-index:2}
-@media(max-width:800px){.filters{grid-template-columns:1fr 1fr}.filters .field:first-child{grid-column:1/-1}.hero{padding:22px}}
-@media(max-width:650px){.top{min-height:72px}.brand{font-size:15px;gap:9px}.brand:before{width:38px;height:38px}.brand:after{font-size:7px;margin-top:32px;margin-right:47px}.hero{gap:15px}.hero-actions{width:100%}.hero-actions .btn{width:100%}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.stat{padding:14px}.stat b{font-size:27px}.stat .stat-icon{width:32px;height:32px;left:12px;top:12px;font-size:16px}.filters{grid-template-columns:1fr}.filters .field:first-child{grid-column:auto}#dashboard>.panel:nth-of-type(2){padding:15px}.request-card{padding:16px}}
-@media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important;scroll-behavior:auto!important}}
-
+:root{
+  --bg:#0b1118;
+  --panel:#121d27;
+  --panel2:#172530;
+  --line:rgba(255,255,255,.09);
+  --text:#edf3f5;
+  --muted:#91a2ad;
+  --gold:#d6b36a;
+  --gold2:#f0d49a;
+  --green:#32c987;
+  --red:#f06b72;
+  --blue:#70adf5;
+  --orange:#e9ae58;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:'Cairo',sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(circle at 10% 0%,rgba(214,179,106,.10),transparent 30%),
+    radial-gradient(circle at 90% 15%,rgba(64,120,145,.13),transparent 28%),
+    var(--bg);
+}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+.container{width:min(1250px,94%);margin:auto}
+.topbar{
+  position:sticky;top:0;z-index:10;
+  background:rgba(11,17,24,.91);
+  backdrop-filter:blur(15px);
+  border-bottom:1px solid var(--line);
+}
+.topbar-inner{
+  min-height:76px;display:flex;align-items:center;
+  justify-content:space-between;gap:15px;
+}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-icon{
+  width:45px;height:45px;border-radius:14px;
+  display:grid;place-items:center;
+  color:#17202a;background:linear-gradient(135deg,var(--gold2),var(--gold));
+  font-size:19px;
+}
+.brand h1{font-size:17px;margin:0;font-weight:900}
+.brand p{font-size:11px;color:var(--muted);margin:1px 0 0}
+.top-actions{display:flex;align-items:center;gap:9px}
+.user-label{font-size:12px;color:var(--muted)}
+.btn{
+  border:1px solid var(--line);border-radius:11px;
+  padding:9px 14px;color:var(--text);
+  background:var(--panel2);font-weight:700;
+  transition:.2s;
+}
+.btn:hover{transform:translateY(-1px);filter:brightness(1.15)}
+.btn-gold{background:linear-gradient(135deg,var(--gold2),var(--gold));color:#17202a;border:0}
+.btn-danger{color:#ff9ca1;border-color:rgba(240,107,114,.3);background:rgba(240,107,114,.09)}
+main{padding:28px 0 55px}
+.page-heading{display:flex;justify-content:space-between;align-items:end;gap:15px;margin-bottom:22px}
+.page-heading h2{margin:0;font-size:25px}
+.page-heading p{margin:5px 0 0;color:var(--muted);font-size:13px}
+.status-line{font-size:12px;color:var(--muted)}
+.status-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);margin-left:6px}
+.stats{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:13px;margin-bottom:22px;
+}
+.stat{
+  background:linear-gradient(145deg,rgba(24,38,49,.95),rgba(16,27,37,.95));
+  border:1px solid var(--line);border-radius:17px;padding:18px;
+  position:relative;overflow:hidden;
+}
+.stat:after{
+  content:"";position:absolute;width:75px;height:75px;
+  border-radius:50%;background:rgba(214,179,106,.06);
+  left:-20px;top:-20px;
+}
+.stat-top{display:flex;justify-content:space-between;align-items:center}
+.stat-icon{
+  width:38px;height:38px;border-radius:12px;
+  display:grid;place-items:center;background:rgba(214,179,106,.12);
+  color:var(--gold2);
+}
+.stat-label{font-size:12px;color:var(--muted)}
+.stat-number{font-size:28px;font-weight:900;margin-top:8px}
+.toolbar{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  padding:15px;background:var(--panel);
+  border:1px solid var(--line);border-radius:16px;margin-bottom:17px;
+}
+.search-box{position:relative;flex:1;min-width:210px}
+.search-box i{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--muted)}
+.search-box input{
+  width:100%;padding:11px 40px 11px 12px;
+  border-radius:10px;border:1px solid var(--line);
+  background:#0c151e;color:var(--text);outline:none;
+}
+.toolbar select{
+  min-width:160px;padding:11px;border-radius:10px;
+  border:1px solid var(--line);background:#0c151e;color:var(--text);
+  outline:none;
+}
+.toolbar select option{background:#101820}
+.results-label{font-size:12px;color:var(--muted);margin-right:auto}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+.consult-card{
+  border:1px solid var(--line);border-radius:17px;
+  background:linear-gradient(145deg,#15232e,#101a23);
+  padding:18px;min-width:0;
+}
+.card-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.client-name{font-size:17px;font-weight:900;overflow-wrap:anywhere}
+.date{font-size:11px;color:var(--muted);margin-top:3px}
+.pill{
+  display:inline-flex;align-items:center;gap:5px;
+  border-radius:30px;padding:5px 10px;font-size:11px;font-weight:800;
+  white-space:nowrap;
+}
+.pill-new{color:#8fc1ff;background:rgba(112,173,245,.12)}
+.pill-reviewing{color:#f0c47b;background:rgba(233,174,88,.12)}
+.pill-contacted{color:#6ce2ae;background:rgba(50,201,135,.12)}
+.pill-closed{color:#b4bec6;background:rgba(180,190,198,.12)}
+.card-divider{height:1px;background:var(--line);margin:14px 0}
+.meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.meta-item small{display:block;color:var(--muted);font-size:11px;margin-bottom:3px}
+.meta-item strong{font-size:13px;overflow-wrap:anywhere}
+.details{
+  background:rgba(0,0,0,.15);border:1px solid var(--line);
+  border-radius:11px;padding:12px;margin-top:13px;
+}
+.details small{color:var(--muted);font-size:11px}
+.details p{white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px;line-height:1.9;margin:5px 0 0}
+.contact-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}
+.contact-btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:9px 13px;border-radius:10px;text-decoration:none;
+  font-size:12px;font-weight:800;transition:.2s;flex:1;
+}
+.contact-btn:hover{transform:translateY(-2px);filter:brightness(1.15)}
+.call-btn{color:#a8ceff;background:rgba(112,173,245,.10);border:1px solid rgba(112,173,245,.25)}
+.whatsapp-btn{color:#65e6a9;background:rgba(37,211,102,.10);border:1px solid rgba(37,211,102,.28)}
+.card-footer{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:10px;flex-wrap:wrap;margin-top:14px;
+}
+.status-select{
+  flex:1;min-width:150px;padding:9px 10px;
+  border-radius:10px;border:1px solid var(--line);
+  background:#0b151e;color:var(--text);font-size:12px;
+}
+.delete-btn{
+  border:1px solid rgba(240,107,114,.3);
+  background:rgba(240,107,114,.09);color:#ff969c;
+  padding:9px 12px;border-radius:10px;font-size:12px;font-weight:800;
+}
+.delete-btn:hover{background:rgba(240,107,114,.18)}
+.empty{
+  grid-column:1/-1;text-align:center;padding:55px 15px;
+  border:1px dashed var(--line);border-radius:16px;color:var(--muted);
+}
+.empty i{font-size:30px;color:var(--gold);margin-bottom:12px}
+.login-wrap{
+  min-height:100vh;display:grid;place-items:center;padding:20px;
+}
+.login-card{
+  width:min(430px,100%);padding:30px;
+  background:linear-gradient(145deg,#172630,#101a23);
+  border:1px solid rgba(214,179,106,.2);border-radius:22px;
+  box-shadow:0 25px 80px rgba(0,0,0,.35);
+}
+.login-logo{
+  width:60px;height:60px;border-radius:18px;
+  display:grid;place-items:center;margin:0 auto 15px;
+  background:linear-gradient(135deg,var(--gold2),var(--gold));
+  color:#17202a;font-size:24px;
+}
+.login-card h2{text-align:center;margin:0;font-size:23px}
+.login-card>p{text-align:center;color:var(--muted);font-size:12px;margin:6px 0 24px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12px;color:#c3cdd3;margin-bottom:7px}
+.field input{
+  width:100%;padding:12px;border-radius:11px;
+  border:1px solid var(--line);background:#0b151e;color:var(--text);
+  outline:none;
+}
+.field input:focus,.search-box input:focus{border-color:var(--gold)}
+.login-submit{width:100%;padding:12px;margin-top:5px}
+.error-msg{
+  color:#ff969c;background:rgba(240,107,114,.09);
+  border:1px solid rgba(240,107,114,.2);padding:10px;
+  border-radius:10px;font-size:12px;margin-bottom:13px;
+}
+.toast{
+  position:fixed;bottom:20px;left:20px;z-index:30;
+  background:#1b2b36;border:1px solid var(--line);
+  border-radius:12px;padding:12px 17px;
+  box-shadow:0 12px 40px rgba(0,0,0,.3);
+  font-size:13px;max-width:min(90vw,400px);
+}
+.toast.error{border-color:rgba(240,107,114,.4);color:#ffadb1}
+.loading{text-align:center;padding:35px;color:var(--muted)}
+.loading i{color:var(--gold);margin-left:8px}
+footer{text-align:center;color:#71818b;font-size:11px;padding:20px}
+@media(max-width:850px){
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .cards{grid-template-columns:1fr}
+}
+@media(max-width:560px){
+  .topbar-inner{min-height:68px}
+  .brand h1{font-size:14px}
+  .brand p{font-size:10px}
+  .user-label{display:none}
+  main{padding-top:20px}
+  .page-heading h2{font-size:21px}
+  .stats{gap:9px}
+  .stat{padding:13px}
+  .stat-number{font-size:23px}
+  .stat-label{font-size:11px}
+  .toolbar select{flex:1;min-width:120px}
+  .meta-grid{grid-template-columns:1fr 1fr}
+  .consult-card{padding:14px}
+}
 </style>
 </head>
 
 <body>
 
-<header>
-<div class="wrap top">
-<a class="brand" href="index.html" aria-label="MOZA LEGAL الصفحة الرئيسية">MOZA LEGAL <span style="color:var(--gold);font-weight:600">| الإدارة</span></a>
-<button id="logoutBtn" class="btn secondary hidden">تسجيل الخروج</button>
-</div>
-</header>
-
-<main class="wrap">
-
 <!-- تسجيل الدخول -->
+<section id="loginScreen" class="login-wrap">
+  <div class="login-card">
+    <div class="login-logo"><i class="fa-solid fa-scale-balanced"></i></div>
+    <h2>MOZA LEGAL</h2>
+    <p>لوحة إدارة الاستشارات القانونية</p>
 
-<section id="loginPanel" class="panel login">
+    <div id="loginError" class="error-msg hidden"></div>
 
-<h2>دخول المحامي</h2>
-
-<p class="muted">
-سجّل الدخول بالبريد وكلمة المرور اللذين أنشأتهما في Supabase Authentication.
-</p>
-
-<form id="loginForm">
-
-<label for="email">البريد الإلكتروني</label>
-<input id="email" type="email" autocomplete="username" required>
-
-<label for="password">كلمة المرور</label>
-<input id="password" type="password" autocomplete="current-password" required>
-
-<button class="btn" id="loginBtn" style="width:100%;margin-top:18px">
-تسجيل الدخول
-</button>
-
-<div id="loginMessage" class="msg" role="status"></div>
-
-</form>
+    <form id="loginForm">
+      <div class="field">
+        <label for="email">البريد الإلكتروني</label>
+        <input id="email" type="email" autocomplete="username" required placeholder="name@example.com">
+      </div>
+      <div class="field">
+        <label for="password">كلمة المرور</label>
+        <input id="password" type="password" autocomplete="current-password" required placeholder="••••••••">
+      </div>
+      <button class="btn btn-gold login-submit" id="loginBtn" type="submit">
+        <i class="fa-solid fa-right-to-bracket"></i>
+        تسجيل الدخول
+      </button>
+    </form>
+  </div>
 </section>
 
-<!-- لوحة التحكم -->
-<section id="dashboard" class="hidden">
-  <div class="panel hero">
-    <div><div class="small" style="color:var(--gold);font-weight:800;letter-spacing:1px">MOZA LEGAL · ADMIN</div>
-      <h1>إدارة طلبات الاستشارات</h1><div class="small">مركز متابعة آمن ومنظم لطلبات المكتب القانونية</div></div>
-    <div class="hero-actions"><button id="refreshBtn" class="btn secondary">↻ تحديث الطلبات</button></div>
-  </div>
-  <div class="stats">
-    <div class="stat"><span>إجمالي الطلبات</span><b id="totalCount">0</b><i class="stat-icon">▤</i></div>
-    <div class="stat"><span>طلبات جديدة</span><b id="newCount">0</b><i class="stat-icon">✦</i></div>
-    <div class="stat"><span>قيد المراجعة</span><b id="reviewingCount">0</b><i class="stat-icon">◷</i></div>
-    <div class="stat"><span>تم التواصل</span><b id="contactedCount">0</b><i class="stat-icon">✓</i></div>
-  </div>
-  <div class="panel">
-    <div class="section-head"><h3>طلبات المكتب</h3><span id="resultCount" class="result-count">0 طلب</span></div>
-    <div class="filters">
-      <div class="field"><label for="searchInput">بحث في الطلبات</label><input id="searchInput" type="search" placeholder="ابحث بالاسم أو الهاتف أو نوع الاستشارة أو التفاصيل..."></div>
-      <div class="field"><label for="filter">فلترة حسب الحالة</label><select id="filter"><option value="all">كل الحالات</option><option value="new">جديد</option><option value="reviewing">قيد المراجعة</option><option value="contacted">تم التواصل</option><option value="closed">مغلق</option></select></div>
-      <div class="field"><label for="sortOrder">ترتيب الطلبات</label><select id="sortOrder"><option value="newest">الأحدث أولًا</option><option value="oldest">الأقدم أولًا</option><option value="name">الاسم أبجديًا</option></select></div>
+<!-- لوحة الإدارة -->
+<div id="adminScreen" class="hidden">
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <div class="brand">
+        <div class="brand-icon"><i class="fa-solid fa-scale-balanced"></i></div>
+        <div>
+          <h1>MOZA LEGAL</h1>
+          <p>نظام إدارة الاستشارات</p>
+        </div>
+      </div>
+      <div class="top-actions">
+        <span class="user-label" id="adminEmail"></span>
+        <button class="btn" id="refreshBtn" type="button" title="تحديث الطلبات">
+          <i class="fa-solid fa-rotate"></i>
+        </button>
+        <button class="btn btn-danger" id="logoutBtn" type="button">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+          خروج
+        </button>
+      </div>
     </div>
-    <div id="loadMessage" class="small" style="margin:15px 0"></div>
-    <div id="rows" class="cards"></div>
-    <div id="empty" class="empty hidden">لا توجد طلبات تطابق البحث أو الفلترة الحالية.</div>
-  </div>
-</section>
-</main>
+  </header>
+
+  <main class="container">
+    <div class="page-heading">
+      <div>
+        <h2>لوحة التحكم</h2>
+        <p>متابعة وإدارة طلبات الاستشارات القانونية</p>
+      </div>
+      <div class="status-line"><span class="status-dot"></span>النظام متصل</div>
+    </div>
+
+    <section class="stats">
+      <div class="stat">
+        <div class="stat-top">
+          <span class="stat-label">إجمالي الطلبات</span>
+          <span class="stat-icon"><i class="fa-solid fa-folder-open"></i></span>
+        </div>
+        <div class="stat-number" id="totalCount">0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-top">
+          <span class="stat-label">طلبات جديدة</span>
+          <span class="stat-icon"><i class="fa-solid fa-bell"></i></span>
+        </div>
+        <div class="stat-number" id="newCount">0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-top">
+          <span class="stat-label">قيد المراجعة</span>
+          <span class="stat-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
+        </div>
+        <div class="stat-number" id="reviewCount">0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-top">
+          <span class="stat-label">تم التواصل</span>
+          <span class="stat-icon"><i class="fa-solid fa-phone"></i></span>
+        </div>
+        <div class="stat-number" id="contactedCount">0</div>
+      </div>
+    </section>
+
+    <section class="toolbar">
+      <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input id="searchInput" type="search" placeholder="ابحث بالاسم أو رقم الهاتف أو التفاصيل...">
+      </div>
+      <select id="statusFilter">
+        <option value="all">كل الحالات</option>
+        <option value="new">جديد</option>
+        <option value="reviewing">قيد المراجعة</option>
+        <option value="contacted">تم التواصل</option>
+        <option value="closed">مغلق</option>
+      </select>
+      <span class="results-label" id="resultsCount">0 طلب</span>
+    </section>
+
+    <section id="consultationsList" class="cards">
+      <div class="empty"><i class="fa-solid fa-inbox"></i><div>جاري تحميل الطلبات...</div></div>
+    </section>
+  </main>
+
+  <footer>MOZA LEGAL — لوحة الإدارة</footer>
+</div>
+
+<div id="toast" class="toast hidden" role="status"></div>
+
 <script>
-
-// =====================================
-// إعدادات Supabase
-// =====================================
-
+/* إعدادات Supabase */
 const SUPABASE_URL = 'https://rigaeuibiwcnfhccsscj.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_UTUW4uEEdnYb-nghVx-FLw_nu9pBg6E';
 
-const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_UTUW4uEEdnYb-nghVx-FLw_nu9pBg6E';
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// اسم العميل sb لتجنب تعارض اسم supabase
-const sb = window.supabase.createClient(
-SUPABASE_URL,
-SUPABASE_PUBLISHABLE_KEY
-);
+const $ = (id) => document.getElementById(id);
 
-// =====================================
-// متغيرات عامة
-// =====================================
-
-const $ = id => document.getElementById(id);
-
+let currentUser = null;
 let consultations = [];
+let toastTimer = null;
 
-const labels = {
-new:'جديد',
-reviewing:'قيد المراجعة',
-contacted:'تم التواصل',
-closed:'مغلق'
+const statusNames = {
+  new: 'جديد',
+  reviewing: 'قيد المراجعة',
+  contacted: 'تم التواصل',
+  closed: 'مغلق'
 };
 
-// حماية النصوص المعروضة من HTML غير المرغوب
-const escapeHtml = value =>
-String(value ?? '').replace(/[&<>"']/g, c => ({
-'&':'&amp;',
-'<':'&lt;',
-'>':'&gt;',
-'"':'&quot;',
-"'":'&#39;'
-}[c]));
+function showToast(message, isError = false) {
+  const el = $('toast');
+  el.textContent = message;
+  el.classList.remove('hidden', 'error');
+  if (isError) el.classList.add('error');
 
-// =====================================
-// عرض لوحة التحكم
-// =====================================
-
-function showDashboard(show){
-
-$('loginPanel').classList.toggle('hidden',show);
-
-$('dashboard').classList.toggle('hidden',!show);
-
-$('logoutBtn').classList.toggle('hidden',!show);
-
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.add('hidden'), 3500);
 }
 
-// =====================================
-// تحميل طلبات العملاء
-// =====================================
-
-async function loadConsultations(){
-
-$('loadMessage').textContent='جارٍ تحميل الطلبات...';
-
-const {data,error} = await sb
-.from('legal_consultations')
-.select('id,full_name,phone,topic,details,status,created_at')
-.order('created_at',{ascending:false});
-
-if(error){
-
-$('loadMessage').textContent=
-'تعذر تحميل الطلبات. تأكد من سياسات SQL وتسجيل الدخول بحساب المدير.';
-
-console.error(error);
-
-return;
-
+function showLoginError(message) {
+  $('loginError').textContent = message;
+  $('loginError').classList.remove('hidden');
 }
 
-consultations=data||[];
-
-$('totalCount').textContent=consultations.length;
-
-$('newCount').textContent=consultations.filter(x=>x.status==='new').length;
-$('reviewingCount').textContent=consultations.filter(x=>x.status==='reviewing').length;
-
-$('contactedCount').textContent=
-consultations.filter(x=>x.status==='contacted').length;
-
-renderRows();
-
-$('loadMessage').textContent=
-'آخر تحديث: '+new Date().toLocaleString('ar-EG');
-
+function escapeHTML(value) {
+  return String(value ?? '').replace(/[&<>"']/g, char => ({
+    '&':'&amp;',
+    '<':'&lt;',
+    '>':'&gt;',
+    '"':'&quot;',
+    "'":'&#39;'
+  })[char]);
 }
 
-// =====================================
-// عرض العملاء داخل الجدول
-// =====================================
+function formatDate(value) {
+  if (!value) return 'غير محدد';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return 'غير محدد';
 
-function renderRows(){
-  const filter=$('filter').value;
-  const query=$('searchInput').value.trim().toLocaleLowerCase('ar');
-  const sort=$('sortOrder').value;
-  let shown=consultations.filter(x=>{
-    const matchesStatus=filter==='all'||x.status===filter;
-    const haystack=[x.full_name,x.phone,x.topic,x.details,x.id].map(v=>String(v??'').toLocaleLowerCase('ar')).join(' ');
-    return matchesStatus&&(!query||haystack.includes(query));
+  return new Intl.DateTimeFormat('ar-EG', {
+    year:'numeric',
+    month:'long',
+    day:'numeric',
+    hour:'2-digit',
+    minute:'2-digit'
+  }).format(date);
+}
+
+/* تجهيز رقم الهاتف لرابط واتساب */
+function normalizePhone(phone) {
+  let digits = String(phone || '').replace(/\D/g, '');
+
+  if (!digits) return '';
+
+  // تحويل الرقم المصري المحلي 01xxxxxxxxx أو 0xxxxxxxxxx إلى 20
+  if (digits.startsWith('0')) {
+    digits = '20' + digits.slice(1);
+  }
+
+  // إزالة صفر دولي زائد إذا كان الرقم مكتوبًا 0020...
+  if (digits.startsWith('00')) {
+    digits = digits.slice(2);
+  }
+
+  return digits;
+}
+
+function getStatusClass(status) {
+  return ({
+    new:'pill-new',
+    reviewing:'pill-reviewing',
+    contacted:'pill-contacted',
+    closed:'pill-closed'
+  })[status] || 'pill-new';
+}
+
+/* التأكد من أن المستخدم مدير مسجل */
+async function verifyAdmin(user) {
+  const { data, error } = await sb
+    .from('legal_admins')
+    .select('user_id')
+    .eq('user_id', user.id)
+    .maybeSingle();
+
+  if (error) {
+    console.error('Admin verification error:', error);
+    throw new Error('تعذر التحقق من صلاحيات الحساب. راجع صلاحيات جدول legal_admins.');
+  }
+
+  if (!data) {
+    throw new Error('هذا الحساب غير مسموح له بدخول لوحة الإدارة.');
+  }
+
+  return true;
+}
+
+function showAdmin(user) {
+  currentUser = user;
+  $('loginScreen').classList.add('hidden');
+  $('adminScreen').classList.remove('hidden');
+  $('adminEmail').textContent = user.email || 'مدير النظام';
+}
+
+function showLogin() {
+  currentUser = null;
+  consultations = [];
+  $('adminScreen').classList.add('hidden');
+  $('loginScreen').classList.remove('hidden');
+}
+
+/* تسجيل الدخول */
+$('loginForm').addEventListener('submit', async (event) => {
+  event.preventDefault();
+
+  const email = $('email').value.trim();
+  const password = $('password').value;
+  const btn = $('loginBtn');
+
+  btn.disabled = true;
+  btn.textContent = 'جارٍ التحقق...';
+  $('loginError').classList.add('hidden');
+
+  try {
+    const { data, error } = await sb.auth.signInWithPassword({
+      email,
+      password
+    });
+
+    if (error) throw error;
+    if (!data.user) throw new Error('تعذر تسجيل الدخول.');
+
+    await verifyAdmin(data.user);
+    showAdmin(data.user);
+    await loadConsultations();
+    showToast('تم تسجيل الدخول بنجاح');
+  } catch (error) {
+    console.error(error);
+    showLoginError(error.message || 'تعذر تسجيل الدخول، راجع البيانات.');
+    await sb.auth.signOut();
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> تسجيل الدخول';
+  }
+});
+
+/* تحميل الاستشارات */
+async function loadConsultations() {
+  if (!currentUser) return;
+
+  $('consultationsList').innerHTML =
+    '<div class="loading"><i class="fa-solid fa-spinner fa-spin"></i> جاري تحميل الطلبات...</div>';
+
+  try {
+    await verifyAdmin(currentUser);
+
+    const { data, error } = await sb
+      .from('legal_consultations')
+      .select('id,full_name,phone,topic,details,status,created_at')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    consultations = data || [];
+    updateStats();
+    renderRows();
+  } catch (error) {
+    console.error('Load consultations error:', error);
+    $('consultationsList').innerHTML =
+      '<div class="empty"><i class="fa-solid fa-triangle-exclamation"></i><div>' +
+      escapeHTML(error.message || 'حدث خطأ أثناء تحميل الطلبات') +
+      '</div></div>';
+    showToast(error.message || 'تعذر تحميل الطلبات', true);
+  }
+}
+
+/* الإحصائيات */
+function updateStats() {
+  $('totalCount').textContent = consultations.length;
+  $('newCount').textContent = consultations.filter(x => x.status === 'new').length;
+  $('reviewCount').textContent = consultations.filter(x => x.status === 'reviewing').length;
+  $('contactedCount').textContent = consultations.filter(x => x.status === 'contacted').length;
+}
+
+/* رسم البطاقات */
+function renderRows() {
+  const search = $('searchInput').value.trim().toLowerCase();
+  const filter = $('statusFilter').value;
+
+  const filtered = consultations.filter(item => {
+    const text = [
+      item.full_name,
+      item.phone,
+      item.topic,
+      item.details
+    ].join(' ').toLowerCase();
+
+    const matchesSearch = text.includes(search);
+    const matchesStatus = filter === 'all' || item.status === filter;
+
+    return matchesSearch && matchesStatus;
   });
-  shown.sort((a,b)=>{
-    if(sort==='name') return String(a.full_name||'').localeCompare(String(b.full_name||''),'ar');
-    const diff=new Date(a.created_at||0)-new Date(b.created_at||0);
-    return sort==='oldest'?diff:-diff;
-  });
-  $('rows').innerHTML=shown.map(x=>{
-    const status=labels[x.status]||'غير محدد';
-    const statusClass=['new','reviewing','contacted','closed'].includes(x.status)?x.status:'new';
-    const color={new:'var(--blue)',reviewing:'var(--amber)',contacted:'var(--green)',closed:'var(--red)'}[statusClass];
-    const date=x.created_at?new Date(x.created_at).toLocaleString('ar-EG'):'—';
+
+  $('resultsCount').textContent = filtered.length + ' طلب';
+
+  if (!filtered.length) {
+    $('consultationsList').innerHTML =
+      '<div class="empty"><i class="fa-solid fa-folder-open"></i><div>لا توجد طلبات مطابقة للبحث</div></div>';
+    return;
+  }
+
+  $('consultationsList').innerHTML = filtered.map(item => {
+    const phoneDigits = String(item.phone || '').replace(/\D/g, '');
+    const whatsappNumber = normalizePhone(item.phone);
+    const phoneLink = phoneDigits ? 'tel:' + phoneDigits : '';
+    const whatsappLink = whatsappNumber
+      ? 'https://wa.me/' + whatsappNumber
+      : '';
+
+    const status = statusNames[item.status] ? item.status : 'new';
+
     return `
-      <article class="request-card" style="--status-color:${color}">
-        <div class="card-top"><div class="card-name">${escapeHtml(x.full_name||'بدون اسم')}</div><span class="id-tag">#${escapeHtml(x.id)}</span></div>
-        <div style="margin-top:10px"><span class="pill ${statusClass}">${escapeHtml(status)}</span></div>
-        <div class="meta">
-          <div class="meta-row"><span>☎</span><strong><a href="tel:${escapeHtml(x.phone||'')}">${escapeHtml(x.phone||'غير مسجل')}</a></strong></div>
-          <div class="meta-row"><span>⚖</span><strong>${escapeHtml(x.topic||'لم يحدد نوع الاستشارة')}</strong></div>
-          <div class="meta-row"><span>◷</span><span>${escapeHtml(date)}</span></div>
+      <article class="consult-card" data-id="${escapeHTML(item.id)}">
+        <div class="card-head">
+          <div>
+            <div class="client-name">${escapeHTML(item.full_name || 'بدون اسم')}</div>
+            <div class="date">
+              <i class="fa-regular fa-clock"></i>
+              ${escapeHTML(formatDate(item.created_at))}
+            </div>
+          </div>
+          <span class="pill ${getStatusClass(status)}">
+            <i class="fa-solid fa-circle"></i>
+            ${escapeHTML(statusNames[status])}
+          </span>
         </div>
-        <div class="details">${escapeHtml(x.details||'لا توجد تفاصيل مرفقة')}</div>
-        <div class="card-footer"><span class="small">تغيير حالة الطلب</span>
-          <select class="status-select" data-id="${escapeHtml(x.id)}" aria-label="حالة الطلب ${escapeHtml(x.full_name||'')}">
-            ${Object.entries(labels).map(([v,l])=>`<option value="${v}" ${x.status===v?'selected':''}>${l}</option>`).join('')}
+
+        <div class="card-divider"></div>
+
+        <div class="meta-grid">
+          <div class="meta-item">
+            <small>رقم الهاتف</small>
+            <strong>${escapeHTML(item.phone || 'غير متوفر')}</strong>
+          </div>
+          <div class="meta-item">
+            <small>نوع الاستشارة</small>
+            <strong>${escapeHTML(item.topic || 'غير محدد')}</strong>
+          </div>
+        </div>
+
+        <div class="details">
+          <small><i class="fa-regular fa-file-lines"></i> تفاصيل الاستشارة</small>
+          <p>${escapeHTML(item.details || 'لا توجد تفاصيل مضافة')}</p>
+        </div>
+
+        <div class="contact-actions">
+          ${phoneLink ? `
+            <a class="contact-btn call-btn" href="${escapeHTML(phoneLink)}">
+              <i class="fa-solid fa-phone"></i>
+              اتصال بالعميل
+            </a>` : ''}
+          ${whatsappLink ? `
+            <a class="contact-btn whatsapp-btn"
+               href="${escapeHTML(whatsappLink)}"
+               target="_blank" rel="noopener noreferrer">
+              <i class="fa-brands fa-whatsapp"></i>
+              مراسلة واتساب
+            </a>` : ''}
+          ${!phoneLink && !whatsappLink ? `
+            <span class="contact-btn call-btn" style="opacity:.55;cursor:default">
+              <i class="fa-solid fa-phone-slash"></i>
+              لا يوجد رقم هاتف
+            </span>` : ''}
+        </div>
+
+        <div class="card-footer">
+          <select class="status-select" data-status-id="${escapeHTML(item.id)}" aria-label="تغيير حالة الطلب">
+            <option value="new" ${status === 'new' ? 'selected' : ''}>جديد</option>
+            <option value="reviewing" ${status === 'reviewing' ? 'selected' : ''}>قيد المراجعة</option>
+            <option value="contacted" ${status === 'contacted' ? 'selected' : ''}>تم التواصل</option>
+            <option value="closed" ${status === 'closed' ? 'selected' : ''}>مغلق</option>
           </select>
+          <button class="delete-btn" type="button" data-delete-id="${escapeHTML(item.id)}">
+            <i class="fa-solid fa-trash"></i>
+            حذف الطلب
+          </button>
         </div>
-      </article>`;
+      </article>
+    `;
   }).join('');
-  $('resultCount').textContent=`${shown.length} من ${consultations.length} طلب`;
-  $('empty').classList.toggle('hidden',shown.length!==0);
 }
 
-// =====================================
-// تغيير حالة طلب العميل
-// =====================================
+/* البحث والفلترة */
+$('searchInput').addEventListener('input', renderRows);
+$('statusFilter').addEventListener('change', renderRows);
 
-$('rows').addEventListener('change',async e=>{
+/* تغيير حالة الطلب */
+$('consultationsList').addEventListener('change', async (event) => {
+  const select = event.target.closest('[data-status-id]');
+  if (!select) return;
 
-if(!e.target.matches('select[data-id]'))return;
+  const id = select.dataset.statusId;
+  const newStatus = select.value;
+  const oldItem = consultations.find(x => String(x.id) === String(id));
 
-const id=e.target.dataset.id;
+  if (!oldItem) return;
 
-const status=e.target.value;
+  const oldStatus = oldItem.status;
+  select.disabled = true;
 
-e.target.disabled=true;
+  try {
+    await verifyAdmin(currentUser);
 
-const {error}=await sb
-.from('legal_consultations')
-.update({status})
-.eq('id',id);
+    const { error } = await sb
+      .from('legal_consultations')
+      .update({ status: newStatus })
+      .eq('id', id);
 
-if(error){
+    if (error) throw error;
 
-alert('لم نتمكن من تحديث الحالة. تأكد من إضافة سياسة التحديث في SQL.');
-
-console.error(error);
-
-}else{
-
-const item=consultations.find(x=>x.id===id);
-
-if(item)item.status=status;
-
-await loadConsultations();
-
-}
-
-e.target.disabled=false;
-
+    oldItem.status = newStatus;
+    updateStats();
+    renderRows();
+    showToast('تم تحديث حالة الطلب');
+  } catch (error) {
+    console.error(error);
+    select.value = oldStatus;
+    showToast(error.message || 'تعذر تحديث الحالة', true);
+  } finally {
+    select.disabled = false;
+  }
 });
 
-// =====================================
-// الفلترة والتحديث
-// =====================================
+/* حذف الطلب */
+$('consultationsList').addEventListener('click', async (event) => {
+  const button = event.target.closest('[data-delete-id]');
+  if (!button) return;
 
-$('filter').addEventListener('change',renderRows);
-$('searchInput').addEventListener('input',renderRows);
-$('sortOrder').addEventListener('change',renderRows);
+  const id = button.dataset.deleteId;
+  const item = consultations.find(x => String(x.id) === String(id));
 
-$('refreshBtn').addEventListener('click',loadConsultations);
+  if (!item) return;
 
-// =====================================
-// تسجيل دخول المحامي
-// =====================================
+  const confirmed = window.confirm(
+    'هل أنت متأكد من حذف طلب الاستشارة الخاص بـ "' +
+    (item.full_name || 'العميل') +
+    '"؟\n\nلا يمكن التراجع عن الحذف.'
+  );
 
-$('loginForm').addEventListener('submit',async e=>{
+  if (!confirmed) return;
 
-e.preventDefault();
+  button.disabled = true;
+  button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جارٍ الحذف';
 
-$('loginBtn').disabled=true;
+  try {
+    await verifyAdmin(currentUser);
 
-$('loginMessage').textContent='جارٍ تسجيل الدخول...';
+    const { error } = await sb
+      .from('legal_consultations')
+      .delete()
+      .eq('id', id);
 
-const {error}=await sb.auth.signInWithPassword({
+    if (error) throw error;
 
-email:$('email').value.trim(),
-
-password:$('password').value
-
+    consultations = consultations.filter(x => String(x.id) !== String(id));
+    updateStats();
+    renderRows();
+    showToast('تم حذف الطلب بنجاح');
+  } catch (error) {
+    console.error('Delete error:', error);
+    showToast(error.message || 'تعذر حذف الطلب. راجع صلاحيات قاعدة البيانات.', true);
+    button.disabled = false;
+    button.innerHTML = '<i class="fa-solid fa-trash"></i> حذف الطلب';
+  }
 });
 
-$('loginBtn').disabled=false;
+/* تحديث يدوي */
+$('refreshBtn').addEventListener('click', loadConsultations);
 
-if(error){
-
-$('loginMessage').textContent=
-'بيانات الدخول غير صحيحة أو تعذر تسجيل الدخول.';
-
-console.error(error);
-
-return;
-
-}
-
-// التأكد من هوية المستخدم
-
-const {data:{user},error:userError}=await sb.auth.getUser();
-
-if(userError||!user){
-
-$('loginMessage').textContent='تعذر التحقق من الحساب.';
-
-await sb.auth.signOut();
-
-return;
-
-}
-
-// التأكد من أن الحساب مدير
-
-const {data:admin,error:adminError}=await sb
-.from('legal_admins')
-.select('user_id')
-.eq('user_id',user.id)
-.maybeSingle();
-
-if(adminError||!admin){
-
-await sb.auth.signOut();
-
-$('loginMessage').textContent=
-'هذا الحساب ليس لديه صلاحية إدارة الموقع.';
-
-return;
-
-}
-
-showDashboard(true);
-
-await loadConsultations();
-
+/* تسجيل الخروج */
+$('logoutBtn').addEventListener('click', async () => {
+  await sb.auth.signOut();
+  showLogin();
+  showToast('تم تسجيل الخروج');
 });
 
-// =====================================
-// تسجيل الخروج
-// =====================================
+/* استعادة الجلسة عند فتح الصفحة */
+(async function init() {
+  try {
+    const { data, error } = await sb.auth.getSession();
+    if (error) throw error;
 
-$('logoutBtn').addEventListener('click',async()=>{
+    const user = data.session?.user;
+    if (!user) return;
 
-await sb.auth.signOut();
-
-consultations=[];
-
-showDashboard(false);
-
-});
-
-// =====================================
-// استعادة الجلسة عند إعادة فتح الصفحة
-// =====================================
-
-sb.auth.onAuthStateChange(async(event,session)=>{
-
-if(event==='INITIAL_SESSION'&&session){
-
-const {data:{user}}=await sb.auth.getUser();
-
-if(!user)return;
-
-const {data:admin}=await sb
-.from('legal_admins')
-.select('user_id')
-.eq('user_id',user.id)
-.maybeSingle();
-
-if(admin){
-
-showDashboard(true);
-
-loadConsultations();
-
-}else{
-
-await sb.auth.signOut();
-
-}
-
-}
-
-});
-
+    await verifyAdmin(user);
+    showAdmin(user);
+    await loadConsultations();
+  } catch (error) {
+    console.error('Session restore error:', error);
+    await sb.auth.signOut();
+    showLogin();
+  }
+})();
 </script>
-
 </body>
 </html>
