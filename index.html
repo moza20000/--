@@ -20,7 +20,8 @@
 --gold2:#f0d99d;
 --text:#f4f1e9;
 --muted:#aab4bd;
---line:rgba(214,179,106,.2)
+--line:rgba(214,179,106,.2);
+--whatsapp:#25d366;
 }
 
 *{box-sizing:border-box}
@@ -82,6 +83,7 @@ font-size:14px
 display:inline-flex;
 align-items:center;
 justify-content:center;
+gap:8px;
 padding:11px 21px;
 border-radius:8px;
 background:var(--gold);
@@ -380,6 +382,25 @@ color:var(--text);
 margin-top:18px
 }
 
+.contact-whatsapp{
+display:inline-flex;
+align-items:center;
+gap:10px;
+margin-top:12px;
+padding:11px 17px;
+border:1px solid rgba(37,211,102,.5);
+background:rgba(37,211,102,.08);
+color:#62e895;
+border-radius:9px;
+font-weight:800;
+transition:.2s
+}
+
+.contact-whatsapp:hover{
+background:rgba(37,211,102,.17);
+transform:translateY(-2px)
+}
+
 .form{
 background:var(--panel);
 padding:25px;
@@ -460,6 +481,58 @@ display:none;
 z-index:30
 }
 
+/* زر واتساب العائم */
+
+.whatsapp-float{
+position:fixed;
+left:24px;
+bottom:24px;
+z-index:1000;
+display:flex;
+align-items:center;
+gap:12px;
+padding:11px 17px 11px 13px;
+background:var(--whatsapp);
+color:#062b16;
+border-radius:50px;
+font-family:'Cairo',sans-serif;
+font-size:14px;
+font-weight:900;
+box-shadow:0 8px 30px rgba(37,211,102,.25);
+transition:.25s;
+direction:rtl
+}
+
+.whatsapp-float:hover{
+transform:translateY(-5px);
+box-shadow:0 12px 35px rgba(37,211,102,.4);
+background:#35e477
+}
+
+.whatsapp-icon{
+width:36px;
+height:36px;
+display:grid;
+place-items:center;
+background:#fff;
+border-radius:50%;
+font-size:23px;
+color:#16a34a;
+flex-shrink:0
+}
+
+.whatsapp-label{
+display:flex;
+flex-direction:column;
+line-height:1.4
+}
+
+.whatsapp-label small{
+font-size:10px;
+font-weight:600;
+opacity:.75
+}
+
 @media(max-width:800px){
 
 .links{
@@ -500,6 +573,21 @@ grid-template-columns:1fr
 .fields{grid-template-columns:1fr}
 .hero h1{font-size:36px}
 .section-head h2{font-size:27px}
+
+.whatsapp-float{
+left:15px;
+bottom:15px;
+padding:8px;
+gap:0
+}
+
+.whatsapp-label{display:none}
+
+.whatsapp-icon{
+width:48px;
+height:48px;
+font-size:27px
+}
 
 }
 </style>
@@ -705,7 +793,14 @@ MOZA LEGAL
 <p>يمكنك تعديل بيانات التواصل والعنوان ومواعيد العمل لتناسب المحامي.</p>
 
 <strong>رقم الهاتف / واتساب</strong>
-<span>يُضاف رقم المكتب هنا</span>
+<span id="officePhone">يُضاف رقم المكتب هنا</span>
+
+<div>
+<a class="contact-whatsapp" id="contactWhatsApp" href="#" target="_blank" rel="noopener noreferrer">
+<span>☏</span>
+<span>تواصل مع المستشار عبر واتساب</span>
+</a>
+</div>
 
 <strong>العنوان</strong>
 <span>يُضاف عنوان المكتب هنا</span>
@@ -776,10 +871,39 @@ MOZA LEGAL
 </div>
 </footer>
 
+<!-- زر واتساب العائم -->
+<a class="whatsapp-float"
+   id="floatingWhatsApp"
+   href="#"
+   target="_blank"
+   rel="noopener noreferrer"
+   aria-label="تواصل مع المستشار عبر واتساب">
+
+  <span class="whatsapp-icon">☏</span>
+
+  <span class="whatsapp-label">
+    تواصل مع المستشار
+    <small>نحن هنا للرد على استفسارك</small>
+  </span>
+
+</a>
+
 <script>
 (function(){
 
 'use strict';
+
+/* =====================================
+   إعداد رقم واتساب المستشار
+   اكتب الرقم بكود مصر بدون + أو مسافات
+   مثال: 2010XXXXXXXX
+===================================== */
+
+const WHATSAPP_NUMBER = '2010XXXXXXXX';
+
+/* =====================================
+   إعدادات Supabase
+===================================== */
 
 const SUPABASE_URL =
 'https://rigaeuibiwcnfhccsscj.supabase.co';
@@ -797,7 +921,56 @@ const legalSb = window.supabase.createClient(
   SUPABASE_PUBLISHABLE_KEY
 );
 
-// القائمة
+/* =====================================
+   إعداد روابط واتساب
+===================================== */
+
+const whatsappNumber = WHATSAPP_NUMBER.replace(/\D/g, '');
+
+const floatingWhatsApp =
+document.getElementById('floatingWhatsApp');
+
+const contactWhatsApp =
+document.getElementById('contactWhatsApp');
+
+const officePhone =
+document.getElementById('officePhone');
+
+function setupWhatsApp(){
+
+  const validNumber =
+    /^20\d{10}$/.test(whatsappNumber);
+
+  if (!validNumber) {
+    floatingWhatsApp.style.display = 'none';
+    contactWhatsApp.style.display = 'none';
+
+    officePhone.textContent =
+      'يرجى إضافة رقم المكتب في إعدادات الموقع';
+
+    console.warn('Please enter a valid Egyptian WhatsApp number.');
+    return;
+  }
+
+  const message =
+    encodeURIComponent('مرحبًا، أريد الاستفسار عن خدمة استشارة قانونية.');
+
+  const whatsappLink =
+    'https://wa.me/' + whatsappNumber + '?text=' + message;
+
+  floatingWhatsApp.href = whatsappLink;
+  contactWhatsApp.href = whatsappLink;
+
+  officePhone.textContent = '+' + whatsappNumber;
+
+}
+
+setupWhatsApp();
+
+/* =====================================
+   القائمة
+===================================== */
+
 const menu = document.getElementById('menu');
 const links = document.getElementById('links');
 
@@ -811,7 +984,10 @@ links.querySelectorAll('a').forEach(function(a){
   });
 });
 
-// النموذج
+/* =====================================
+   نموذج الاستشارات
+===================================== */
+
 const form = document.getElementById('consultForm');
 const message = document.getElementById('formMessage');
 const submitBtn = document.getElementById('submitBtn');
@@ -830,7 +1006,6 @@ form.addEventListener('submit', async function(e){
     details: document.getElementById('details').value.trim()
   };
 
-  // التحقق من البيانات
   if (!payload.full_name || !payload.phone || !payload.details) {
     message.textContent = 'من فضلك أكمل جميع البيانات المطلوبة.';
     return;
@@ -856,7 +1031,6 @@ form.addEventListener('submit', async function(e){
 
   try {
 
-    // إدخال فقط بدون SELECT لحماية بيانات العملاء
     const { error } = await legalSb
       .from('legal_consultations')
       .insert([payload]);
